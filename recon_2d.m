@@ -64,3 +64,7 @@ sens = get_sens_map(image, '2D');
 % C = 2D coil operator.
 C = C_2D(size(image), sens);
 image_coil_combined = C' * image;
+
+
+
+

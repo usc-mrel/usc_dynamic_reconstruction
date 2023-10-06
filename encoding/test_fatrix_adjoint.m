@@ -11,7 +11,7 @@ function test_fatrix_adjoint(G)
     subtraction = abs(sum(Gx(:) .* conj(test_y(:)))) ...
         - abs(sum(test_x(:) .* conj(Ghy(:))));
     
-    assert(subtraction < 1e-2, "adjoint test failed!");
+    assert(abs(subtraction) < 1e-2, "adjoint test failed!");
     
     fprintf("adjoint test passed!\n");
     

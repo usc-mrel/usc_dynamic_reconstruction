@@ -1,25 +1,25 @@
- function ob = C_2D(image_size, sens)
+ function ob = C_2D(image_size, sens, useGPU)
 %function ob = C_2d([mask,] args)
 %|
 %| Do coil map encoding (C).
 %| Inputs:
 %|     image_size: vector image size [nx, ny, nframe, nc]
-%|     sens: sensitivity map: size([nx, ny, coil])
+%|     sens: sensitivity map: size([nx, ny, nframe (or 1 if static), coil])
 %| 
 %| Inspired and modified from Jeff Fessler's Gnufft object in the
 %| Michigan Image Reconstruction Toolbox (MIRT).
+%{
 arguments
     image_size (4, 1) double
-    sens (:,:,:) double
+    sens (:,:,:, :) double
+    useGPU double = 0
 end
+%}
 
 nx = image_size(1);
 ny = image_size(2);
 nframe = image_size(3);
 nc = image_size(4);
-
-% unsqueeze the sensitivity map to be 1 extra dimension.
-sens = permute(sens, [1, 2, 4, 3]);
 
 idim = [nx, ny, nframe];
 odim = [nx, ny, nframe, nc];
