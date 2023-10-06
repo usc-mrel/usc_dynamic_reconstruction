@@ -68,6 +68,7 @@ sens = get_sens_map(image, '2D');
 % C = 2D coil operator.
 C = C_2D(size(image), sens, useGPU);
 image_coil_combined = C' * image;
+test_fatrix_adjoint(C);
 
 scale = max(abs(image_coil_combined(:)));
 
@@ -76,19 +77,19 @@ scale = max(abs(image_coil_combined(:)));
 addpath('optim');
 
 % Define potiential function as fair-l1.
-l1_func = potential_fun('fair-l1', 2);
+l1_func = potential_fun('fair-l1', 0.2);
 
 % operators tfd and tv.
 T_tfd = TFD(size(image_coil_combined));
 T_tv = TV_2D(size(image_coil_combined));
 
 % test adjoint (optional)
-% test_fatrix_adjoint(T_tfd);
+test_fatrix_adjoint(T_tfd);
 test_fatrix_adjoint(T_tv);
 
 % define regularization paramters
 lambdaTFD = 0.15 * scale;
-lambdatTV = 0; 0.01 * scale;
+lambdatTV = 0;
 
 gradDC = @(x) x - kspace;
 curvDC = @(x) 1;
@@ -110,7 +111,9 @@ if useGPU
    image_coil_combined = gpuArray(image_coil_combined);
 end
 
+tic
 [x, out] = ncg_inv_mm(B, gradF, curvF, image_coil_combined, 200, 20, eye,'dai-yuan', costf);
+toc
 
 img_recon = gather(x);
 img_recon = imrotate(fliplr(img_recon), 90);

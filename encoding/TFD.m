@@ -30,11 +30,11 @@ ob = fatrix2('idim', idim, 'odim', odim, ...
  
  function [y] = TFD_forw(x)
     y = diff(x, 1, 3);
-    y = cat(3, y, zeros(size(x, 1), size(x, 2), 1));
+    y = cat(3, x(:,:,1) - x(:,:,end), y);
  end
  
 function [x] = TFD_adj(y)
     x = -diff(y, 1, 3);
-    x = cat(3, zeros(size(y, 1), size(y, 2), 1), x);
+    x = cat(3, x, y(:,:,end) - y(:,:,1));
 end
  
