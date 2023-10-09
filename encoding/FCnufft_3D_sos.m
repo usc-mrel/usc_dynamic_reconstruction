@@ -1,5 +1,5 @@
  function ob = FCnufft_3D_sos(kx_3d, ky_3d, matrix_size, sens, w, mask)
-%function ob = FCnufft_sos([mask,] args)
+%function ob = FCnufft_3Dsos([mask,] args)
 %|
 %| Do sensitivity map encoding (C) and fourier encoding (F) in one step.
 %| Constructed as a fatrix2 object. The reason for doing jointly is to save
@@ -67,28 +67,26 @@ function y = FCnufft_sos_forw(arg, kx_3d, ky_3d, sens, x, mask)
     
     
     for i = 1:nc
-        fidelity_update = bsxfun(@times,x,sens(:,:,:,:,i));
+        fidelity_update = x .* sens(:,:,:,:,i);
         fidelity_update = fftshift(fidelity_update, 3);
         fidelity_update = fft(fidelity_update,[],3) / sqrt(nz);
         fidelity_update = fftshift(fidelity_update, 3);   
         for islice = 1:size(fidelity_update, 3)
             for ispiral = 1:size(y, 2)
-                y(:,ispiral,islice,:, nc) = NUFFT.NUFFT(permute(fidelity_update(:,:,islice,:),[1,2,4,3]),arg(ispiral,islice)) / (sqrt(nx*ny));
-                y = y .* arg(ispiral,islice).W;
+                y(:,ispiral,islice,:, i) = (NUFFT.NUFFT(permute(fidelity_update(:,:,islice,:),[1,2,4,3]),arg(ispiral,islice)) / (sqrt(nx*ny)));
             end
         end
     end
+    y = y .* arg(1).W;
     y = (y .* mask);
 end
 
 
 function x = FCnufft_sos_adj(arg, matrix_size, sens, y, mask, w)
     [nread, ns, kz_steps, nframe, nc] = size(y);
-   
     
     x = zeros([matrix_size, nframe], class(y));
-    y = y .* mask;
-   
+    % y = y .* mask;
 
     for i = 1:nc
         y_c = y(:,:,:,:,i);
@@ -97,9 +95,9 @@ function x = FCnufft_sos_adj(arg, matrix_size, sens, y, mask, w)
         for islice = 1:size(x, 3)
             fidelity_update_temp = zeros([arg(1).size_image, arg(1).size_data(3)], class(x));
             for ispiral = 1:size(y_c, 2)
-                fidelity_update_temp = fidelity_update_temp + (NUFFT.NUFFT_adj(permute(y_c(:,ispiral,islice,:),[1,2,4,3]),arg(ispiral, islice)) * sqrt(matrix_size(1) * matrix_size(2)));
+                fidelity_update_temp = fidelity_update_temp + (NUFFT.NUFFT_adj(permute(y_c(:,ispiral,islice,:),[1,2,4,3]),arg(ispiral, islice)));
             end
-            x_c(:,:,islice,:) = fidelity_update_temp;
+            x_c(:,:,islice,:) = fidelity_update_temp * sqrt(matrix_size(1) * matrix_size(2));
         end
 
         x_c = fftshift(x_c, 3);
@@ -109,49 +107,4 @@ function x = FCnufft_sos_adj(arg, matrix_size, sens, y, mask, w)
         x_c = bsxfun(@times,x_c,conj(sens(:,:,:,:,i)));
         x = x + x_c;
     end
-end
-
-
-function [x,norm] = FCnufft_sos_gram(arg, sens, kx_3d, ky_3d, mask, x1)
-    [nx, ny, nz, nframe] = size(x1);
-    nc = size(sens,5);
-    
-    fidelity_update_all = zeros(size(x1),class(x1));
-    fidelity_norm = 0;
-    for i = 1:nc
-
-        fidelity_update = bsxfun(@times,x1,sens(:,:,:,:,i));
-        fidelity_update = fftshift(fidelity_update, 3);
-        fidelity_update = fft(fidelity_update,[],3);
-        fidelity_update = fftshift(fidelity_update, 3);
-        kSpace_spiral = zeros(size(kx_3d), class(x1));
-        kSpace_spiral = kSpace_spiral(:,:,:,:,1);
-
-        for islice = 1:size(fidelity_update, 3)
-            for ispiral = 1:size(kSpace_spiral, 2)
-                kSpace_spiral(:,ispiral,islice,:) = NUFFT.NUFFT(permute(fidelity_update(:,:,islice,:),[1,2,4,3]),arg(ispiral,islice));
-            end
-        end
-
-        % kSpace_spiral = Data.kSpace(:,:,:,:,i) - kSpace_spiral;
-        kSpace_spiral = kSpace_spiral .* mask;
-        fidelity_norm = fidelity_norm + sum(abs(vec(kSpace_spiral .* (arg(1).W).^0.5)).^2) / prod(arg(1).size_kspace) / size(fidelity_update, 3);
-        for islice = 1:size(fidelity_update, 3)
-            fidelity_update_temp = zeros([arg(1).size_image, arg(1).size_data(3)], class(fidelity_update));
-            for ispiral = 1:size(kSpace_spiral, 2)
-                fidelity_update_temp = fidelity_update_temp + NUFFT.NUFFT_adj(permute(kSpace_spiral(:,ispiral,islice,:),[1,2,4,3]),arg(ispiral, islice));
-            end
-            fidelity_update(:,:,islice,:) = fidelity_update_temp;
-        end
-
-        fidelity_update = fftshift(fidelity_update, 3);
-        fidelity_update = ifft(fidelity_update,[],3);
-        fidelity_update = fftshift(fidelity_update,3);
-
-        
-        fidelity_update = bsxfun(@times,fidelity_update,conj(sens(:,:,:,:,i)));
-        fidelity_update_all = fidelity_update_all + fidelity_update;
-    end
-    norm   = sqrt(fidelity_norm);
-    x = fidelity_update_all;
 end

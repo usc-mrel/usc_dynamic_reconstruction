@@ -1,4 +1,6 @@
 % 2D STCR recon using a "Fatrix" encoding operator.
+% written by Prakash Kumar
+
 clear; close all; clc
 
 addpath('encoding/');
@@ -14,7 +16,7 @@ load(file_name);
 useGPU = 1;
 
 %% Data prep.
-Narms_per_frame = 2; % parameter! can be changed.
+Narms_per_frame = 13; % parameter! can be changed.
 res = [kspace_info.user_ResolutionX, kspace_info.user_ResolutionY];
 matrix_size = round([kspace_info.user_FieldOfViewX, kspace_info.user_FieldOfViewY] ./ res);
 viewOrder = kspace_info.viewOrder;
@@ -53,7 +55,7 @@ DCF = kspace_info.DCF;
 
 %% Encoding operators:
 % construct encoding operator F.
-F = Fnufft_2D(kx, ky, Ncoil, matrix_size, useGPU, DCF(:,1), 2, [4,4]);
+F = Fnufft_2D(kx, ky, Ncoil, matrix_size, useGPU, ones(size(DCF(:,1))), 2, [4,4]);
 
 % adjoint test on the operator F (optional).
 test_fatrix_adjoint(F);

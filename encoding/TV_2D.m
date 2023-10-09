@@ -8,16 +8,15 @@
 %| 
 %| Inspired and modified from Jeff Fessler's Gnufft object in the
 %| Michigan Image Reconstruction Toolbox (MIRT).
-arguments
-    image_size (3, 1) double
-end
 
+%{
 nx = image_size(1);
 ny = image_size(2);
 nframe = image_size(3);
+%}
 
-idim = [nx, ny, nframe];
-odim = [nx, ny, nframe];
+idim = vec(image_size)'; % [nx, ny, nframe];
+odim = vec(image_size)';
 
 forw = @(arg, x) TV_forw(x);
 back = @(arg, y) TV_adj(y);
