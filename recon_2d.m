@@ -6,6 +6,7 @@ path = "/server/home/pkumar/mri_data/disc/speech/vol0634_20230601/raw_hawk/";
 name = "usc_disc_20230601_172615_pk_speech_rt_ssfp_fov24_res24_n13_vieworder_bitr.mat";
 file_name = path + name;
 load(file_name);
+
 %% Data prep.
 Narms_per_frame = 13; % parameter! can be changed.
 res = [kspace_info.user_ResolutionX, kspace_info.user_ResolutionY];
@@ -48,7 +49,7 @@ DCF = kspace_info.DCF;
 addpath('encoding/');
 
 % construct encoding operator F.
-F = Fnufft_2D(kx, ky, Ncoil, matrix_size, DCF(:,1), 1, [4,4]);
+F = Fnufft_2D(kx, ky, Ncoil, matrix_size, 1, DCF(:,1), 1, [4,4]);
 
 % adjoint test on the operator F (optional).
 test_fatrix_adjoint(F);
