@@ -145,7 +145,11 @@ out = cell2mat(out);
 Cost = structArrayToStructWithArrays(out);
 plotCost(Cost);
 
-% save video.
+%% Example of how to look at the line plot
+% disp('Put a Line in the Figure1 to see a line profile')
+% [profiles, lines] = draw_profile_(abs(img_recon));
+
+%% save video.
 save_video("test.avi", img_recon, 0, 1000 / (kspace_info.user_TR * Narms_per_frame / 1000), false, 1/2);
 
 %% Helper Functions
