@@ -46,3 +46,6 @@ ky = reshape(ky, [Nsample_k, Narms_per_frame, Nframes]);
 
 % DCF 
 DCF = kspace_info.DCF;
+
+%pre-weight kspace by sqrt(DCF) and then encode into image.
+kspace = kspace .* sqrt(DCF(:,1));
