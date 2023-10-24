@@ -1,4 +1,4 @@
- function ob = FCnufft_3D_sos(kx_3d, ky_3d, matrix_size, sens, w, mask)
+ function ob = FCnufft_3D_sos(kx_3d, ky_3d, matrix_size, sens, w, mask, ifGPU)
 %function ob = FCnufft_3Dsos([mask,] args)
 %|
 %| Do sensitivity map encoding (C) and fourier encoding (F) in one step.
@@ -37,9 +37,11 @@ for i = 1:nkz
         N = NUFFT.init(kx_temp, ky_temp, 1, [4,4], matrix_size(1), matrix_size(1));
         N.W = w;
 
-        N.S = gpuArray(N.S);
-        N.Apodizer = gpuArray(N.Apodizer);
-        N.W = gpuArray(N.W);
+        if (ifGPU)
+            N.S = gpuArray(N.S);
+            N.Apodizer = gpuArray(N.Apodizer);
+            N.W = gpuArray(N.W);
+        end
         
         N_all(j, i) = N;
     end
@@ -86,7 +88,7 @@ function x = FCnufft_sos_adj(arg, matrix_size, sens, y, mask, w)
     [nread, ns, kz_steps, nframe, nc] = size(y);
     
     x = zeros([matrix_size, nframe], class(y));
-    % y = y .* mask;
+    y = y .* mask;
 
     for i = 1:nc
         y_c = y(:,:,:,:,i);
