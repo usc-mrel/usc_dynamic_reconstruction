@@ -16,7 +16,7 @@ nframe = image_size(3);
 %}
 
 idim = vec(image_size)'; % [nx, ny, nframe];
-odim = vec(image_size)';
+odim = [vec(image_size); 2]';
 
 forw = @(arg, x) TV_forw(x);
 back = @(arg, y) TV_adj(y);
@@ -36,17 +36,38 @@ function diff_result = TV_forw(input_array)
     diff_y = input_array - circshift(input_array, [-1, 0]);
     
     % Sum the differences along both dimensions
-    diff_result = diff_x + diff_y;
+    diff_result = cat(5, (diff_x),  (diff_y));
 end
 
 % Function to compute the adjoint (backward) of the finite differences
 function adjoint_result = TV_adj(forward_diff)
     % Compute the adjoint for dimension 1 (x-axis)
-    adjoint_x = forward_diff - circshift(forward_diff, [0, 1]);
+    adjoint_x = indexLastDim(forward_diff, 1) - circshift(indexLastDim(forward_diff, 1), [0, 1]);
     
     % Compute the adjoint for dimension 2 (y-axis)
-    adjoint_y = forward_diff - circshift(forward_diff, [1, 0]);
+    adjoint_y = indexLastDim(forward_diff, 2) - circshift(indexLastDim(forward_diff, 2), [1, 0]);
     
     % Sum the adjoints along both dimensions
-    adjoint_result = adjoint_x + adjoint_y;
+    adjoint_result = (adjoint_x) + (adjoint_y);
+end
+
+
+function output = indexLastDim(x, index)
+    % Reshape x into a 2D matrix where the last dimension is unfolded
+    % into the columns, and all other dimensions are merged into the rows.
+    sz = size(x); % Get the size of the original array
+    lastDim = sz(end); % The size of the last dimension
+    otherDims = prod(sz(1:end-1)); % The product of the other dimensions
+
+    % Reshape x considering it might have more than 2 dimensions. The new shape
+    % has all the elements except the last dimension in the first dimension,
+    % and the last dimension in the second dimension.
+    reshapedX = reshape(x, [otherDims, lastDim]);
+
+    % Now, index the first element of the last dimension.
+    % Since reshapedX is a 2D matrix, we want the first column.
+    output = reshapedX(:, index);
+
+    % If needed, reshape back to original dimensions minus the last dimension
+    output = reshape(output, sz(1:end-1));
 end
