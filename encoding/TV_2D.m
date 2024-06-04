@@ -36,7 +36,7 @@ function diff_result = TV_forw(input_array)
     diff_y = input_array - circshift(input_array, [-1, 0]);
     
     % Sum the differences along both dimensions
-    diff_result = cat(5, (diff_x),  (diff_y));
+    diff_result = cat(length(size(input_array))+1, (diff_x),  (diff_y));
 end
 
 % Function to compute the adjoint (backward) of the finite differences
