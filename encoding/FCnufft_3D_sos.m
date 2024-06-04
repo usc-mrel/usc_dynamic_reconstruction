@@ -28,7 +28,6 @@
 %| Michigan Image Reconstruction Toolbox (MIRT).
 
 [nread, ns, nkz, nframe] = size(kx_3d);
-
 %% Construct the N operators for forward model calculation...
 for i = 1:nkz
     for j = 1:size(kx_3d, 2)

@@ -1,4 +1,29 @@
 function [x, out, intx] = ncg(B, gradf, curvf, x0, niter, ninner, P, betahow, linesearch_how, fun)
+% Modified from Jeff Fesslers EECS 598 homework
+% https://web.eecs.umich.edu/~fessler/course/598/h/h08.pdf
+%Nonlinear preconditioned conjugate gradient algorithm
+%to minimize a general "inverse problem" cost function
+%`\\sum_{j=1}^J f_j(B_j x)`
+%where each `f_j(t)` has a quadratic majorizer of the form
+%`q_j(t;s) = f_j(t) + \\nabla f_j(s) (t - s) + 1/2 \\|t - s\\|^2_{C(s)}`
+%where C(s) is diagonal matrix of curvatures, with MM line search.
+
+%In
+%* `B` array of J blocks `B_1,...,B_J`
+%*`gradf` array of J functions for computing gradients of `f_1,...,f_J`
+%* `curvf` array of J functions `z -> curv(z)` that return a scalar or
+%a vector of curvature values for each element of `z`
+%* `x0` initial guess; need `length(x) == size(B[j],2)` for `j=1...J`
+%Option
+%* `niter` # number of outer iterations; default 50
+%* `ninner` # number of inner iterations of MM line search; default 5
+%* `P` # preconditioner; default `I`
+%* `betahow` "beta" method for the search direction; default `:dai_yuan`
+%* `fun` User-defined function to be evaluated with two arguments `(x,iter)`.
+%It is evaluated at `(x0,0)` and then after each iteration.
+%Output
+%* `x` final iterate
+%* `out::Array{Any}` `[fun(x0,0), fun(x1,1), ..., fun(x_niter,niter)]`
     
     % Check for missing optional arguments
     if nargin < 10
@@ -100,6 +125,7 @@ function [x, out, intx] = ncg(B, gradf, curvf, x0, niter, ninner, P, betahow, li
         % Another Stopping Criteria
         if iter > 1
             if alpha < 1e-5
+                out = out(1:iter);
                 break;
             end
         end
