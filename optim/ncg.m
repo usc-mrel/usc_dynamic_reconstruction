@@ -124,7 +124,7 @@ function [x, out, intx] = ncg(B, gradf, curvf, x0, niter, ninner, P, betahow, li
         % -----------------------------------------------------------------
         % Another Stopping Criteria
         if iter > 1
-            if alpha < 1e-5
+            if real(alpha) < 1e-5
                 out = out(1:iter);
                 break;
             end
@@ -137,7 +137,7 @@ end
 %% Calculate beta 
 function beta = calculate_beta(delta_x, delta_x_old, s, betahow, reset_flag)
 
-epsilon = 1e-6*max(delta_x(:));
+epsilon = 1e-6*max(abs(delta_x(:)));
 
 switch betahow
     case 'FR'       % Fletcher-Reeves

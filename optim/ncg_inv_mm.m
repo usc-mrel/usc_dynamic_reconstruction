@@ -20,7 +20,7 @@ function [x, out] = ncg_inv_mm(B, gradf, curvf, x0, niter, ninner, P, betahow, f
     x = x0;
 
     out = cell(1, niter + 1);
-    out{1} = fun(x0, 1, {});
+    out{1} = fun(x0, 1);
 
     % Legacy variables
     dir = [];
@@ -72,7 +72,11 @@ function [x, out] = ncg_inv_mm(B, gradf, curvf, x0, niter, ninner, P, betahow, f
         for j = 1:J
             Bx{j} = Bx{j} + alf * Bd{j};
         end
+        
+        if mod(iter,10) == 0 || iter == niter
+            fprintf(sprintf('%10.0f %10.2f %10.4f \n',iter, out{iter}.totalCost, alf));
+        end
 
-        out{iter + 1} = fun(x, iter+1, Bx);
+        out{iter + 1} = fun(x, iter+1);
     end
 end
