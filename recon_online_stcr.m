@@ -21,7 +21,7 @@
 %               sqrt( abs(m_x+1 - m_x)^2 + abs(m_y+1 - m_y) + epsilon )
 %-------------------------------------------------------------------------
 % clear
-restoredefaultpath
+% restoredefaultpath
 currentFile = mfilename('fullpath');
 [currentPath, name, ext] = fileparts(currentFile);
 addpath(currentPath);
