@@ -30,6 +30,9 @@ addpath([currentPath,'/utility/']);
 addpath([currentPath,'/optim/']);
 addpath([currentPath,'/mirt/systems/']);
 addpath([currentPath,'/mirt/utilities/']);
+% addpath /server/home/yagiz/mfile/mirt/systems/
+% addpath /server/home/yagiz/mfile/mirt/penalty/
+% addpath /server/home/yagiz/mfile/mirt/utilities/
 
 % addpath('../onlineSTCR_repo/arrShow/');
 
@@ -44,7 +47,7 @@ TRtoTrim_end = 0;
 %% Recon Related Parameters
 Narms_full = 34; % Number of spirals for full sampling 
 Narms_recon = 6; % Desired temporal resolution (distance between frames)
-Narms_window = 10; % How many TRs to bin in 1 frame
+Narms_window = 6; % How many TRs to bin in 1 frame
 Narms_initial = 55; % How many TRs to bin for initial frame
 %% Optimization Parameters
 lambdaTFD = 1; % Temporal regularization
@@ -56,7 +59,7 @@ Nmaxiter = 6; % number of iterations per frame
 print_cost = true; % print cost of optimization problem each frame (takes more time)
 accelerate_flag = true; % apply Nesterov acceleration
 useGPU = true;
-toeplitz_flag = false; % Use Toeplitz to make E'*E faster
+toeplitz_flag = true; % Use Toeplitz to make E'*E faster
 oversampling = 2; % Oversampling FOV when doing NUFFT
 %% Load Data and prep
 load_and_prep_data_online;

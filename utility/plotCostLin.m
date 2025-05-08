@@ -1,3 +1,12 @@
+% Plot components of online STCR cost functions
+% input:
+% Cost dict {
+% totalCost: [] array
+% fidelityNorm: [] array
+% temporalNorm: [] array
+%. spatialNorm: [] array
+%}
+
 function plotCostLin(Cost)
 
 % loglog(Cost.totalCost,'LineWidth',2, 'Marker', '*', 'MarkerSize', 5);

@@ -17,10 +17,10 @@ ob = fatrix2('idim', idim, 'odim', odim, ...
  end
  
  function [y] = TFD_forw(x)
-    y = fft2(x);
+    y = fft2(x)/sqrt(size(x,1)*size(x,2)); % Make FFT Orthogonal
  end
  
 function [x] = TFD_adj(y)
-    x = ifft2(y);
+    x = ifft2(y)*sqrt(size(y,1)*size(y,2)); % Make iFFT Orthogonal
 end
  
