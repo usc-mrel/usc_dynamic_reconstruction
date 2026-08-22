@@ -58,7 +58,7 @@ step_size_x =2; % step size of shrinkage operator
 Nmaxiter = 6; % number of iterations per frame
 print_cost = true; % print cost of optimization problem each frame (takes more time)
 accelerate_flag = true; % apply Nesterov acceleration
-useGPU = true;
+useGPU = false;
 toeplitz_flag = true; % Use Toeplitz to make E'*E faster
 oversampling = 2; % Oversampling FOV when doing NUFFT
 %% Load Data and prep

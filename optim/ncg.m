@@ -112,7 +112,8 @@ function [x, out, intx] = ncg(B, gradf, curvf, x0, niter, ninner, P, betahow, li
         
         % -----------------------------------------------------------------
         % Print out a summary
-        if mod(iter,10) == 0 || iter == niter
+        if mod(iter,1) == 0 || iter == niter
+            if iter == 1; beta = 0; end
             fprintf(sprintf('%10.0f %10.2f %10.4f %10.4f \n',iter, out{iter}.totalCost, alpha, beta));
         end
         % -----------------------------------------------------------------

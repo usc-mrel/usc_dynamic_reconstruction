@@ -9,9 +9,9 @@ out.Cost = [];
 NF = length(E_load);
 [Nsample,~,Nt,Ncoil] = size(kspace);
 T_tv = TV_2D(size(x_frame1));
-% x = zeros([size(x_frame1),floor(Nt/Narms_recon)]); 
+x = zeros([size(x_frame1),floor(Nt/Narms_recon)]); 
 
-x = gpuArray(single(zeros([size(x_frame1),floor((Nt-Narms_window+Narms_recon)/Narms_recon)]))); % Reconstructed result
+% x = gpuArray(single(zeros([size(x_frame1),floor((Nt-Narms_window+Narms_recon)/Narms_recon)]))); % Reconstructed result
 
 
 for i = 1:1:size(x,3)

@@ -11,7 +11,9 @@ z = T_tv*(x0+dx); % sTV(x)
 t = 1;    
 ydx = dx;
 yz = z;    
-eta = gpuArray(single(zeros(size(z))));    
+% eta = gpuArray(single(zeros(size(z))));    
+eta = single(zeros(size(z)));    
+
 iter = 0;
 N = numel(dx);
 
