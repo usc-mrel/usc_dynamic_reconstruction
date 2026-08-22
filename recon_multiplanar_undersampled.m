@@ -116,7 +116,7 @@ for slice = 1:1:Nslice
     end
 end
 %% Display final result
-implay(abs(video)/prctile(abs(video(:)),95), 1e6/(Nreadout_per_slice+2)/3/kspace_info.user_TR)
+implay(abs(video)/prctile(abs(video(:)),95), 1e6/(Nreadout_per_slice+2)/kspace_info.user_TR)
 %% Cost functions
 function [struct] = each_iter_fun(F, C, T_tfd, T_tv, lambdaTFD, lambdatTV, l1_func, kspace, x, y)
     % added normalization
